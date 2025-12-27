@@ -1,0 +1,12 @@
+POSTGRES = {
+    "HOST": "localhost",
+    "PORT": 5432,
+    "DB_NAME": "stocxsim",
+    "USER": "postgres",
+    "PASSWORD": "Ap1420@810"
+}
+
+API_KEY = "OqRJGaEN"
+CLIENT_ID = "AACB894292"
+CLIENT_PASSWORD  = "1408"
+TOTP_SECRET = "WIEQHKYWVZYIQY3UKKHH7EGQPI"
