@@ -21,13 +21,13 @@ def saveUser(user):
         cur = conn.cursor()
 
         query = """
-        INSERT INTO users (name, email, password)
-        VALUES (%s, %s, %s)
+        INSERT INTO users (user_id,user_name, email, password)
+        VALUES (%s,%s, %s, %s)
         """
 
-        cur.execute(query, (user.username, user.email, user.password))
+        cur.execute(query, (12,user.username, user.email, user.password))
         conn.commit()
-
+        print(user.username, user.email, user.password)
         return {"message": True}
 
     except Exception as e:
@@ -39,7 +39,7 @@ def saveUser(user):
         conn.close()
 
 def getUserByEmail(email):
-    query = "SELECT userid, name, email,password FROM users WHERE email = %s"
+    query = "SELECT user_id, user_name, email,password FROM users WHERE email = %s"
     cur=gc().cursor()
     cur.execute(query, (email,))
     result = cur.fetchone()
@@ -48,3 +48,4 @@ def getUserByEmail(email):
         return user
     else:
         return None
+    
