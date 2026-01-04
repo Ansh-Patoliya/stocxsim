@@ -22,10 +22,10 @@ def saveUser(user):
 
         query = """
         INSERT INTO users (user_id,user_name, email, password)
-        VALUES (%s,%s, %s, %s)
+        VALUES (%s, %s, %s, %s)
         """
 
-        cur.execute(query, (12,user.username, user.email, user.password))
+        cur.execute(query, (user.user_id, user.user_name, user.email, user.password))
         conn.commit()
         print(user.username, user.email, user.password)
         return {"message": True}
@@ -39,7 +39,7 @@ def saveUser(user):
         conn.close()
 
 def getUserByEmail(email):
-    query = "SELECT user_id, user_name, email,password FROM users WHERE email = %s"
+    query = "SELECT user_id,user_name,email,password FROM users WHERE email = %s"
     cur=gc().cursor()
     cur.execute(query, (email,))
     result = cur.fetchone()
