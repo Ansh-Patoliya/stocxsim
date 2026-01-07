@@ -29,7 +29,7 @@ def save_user():
 
     # 🔥 SUBSCRIBE USER WATCHLIST
     user_id = user.get_user_id()
-    tokens = get_stock_tokens_by_user(user_id)   # e.g. 20 tokens
+    tokens = get_watchlist_tokens(user_id)   # e.g. 20 tokens
     subscribe_user_watchlist(user_id, tokens)
     return jsonify({"success": True})
 
