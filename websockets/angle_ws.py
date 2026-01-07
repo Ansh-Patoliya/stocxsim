@@ -40,36 +40,12 @@ def subscribe_user_watchlist(user_id, tokens):
         print("❌ WS not connected yet")
         return
 
-    new_tokens = set(tokens) - subscribed_tokens
-    if not new_tokens:
-        return
-
-    payload = {
-        "correlationID": f"user_{user_id}",
-        "action": 1,
-        "params": {
-            "mode": 1,
-            "tokenList": [{
-                "exchangeType": 1,
-                "tokens": list(new_tokens)
-            }]
-        }
-    }
-
-    ws.send(json.dumps(payload))
-    subscribed_tokens.update(new_tokens)
-
-    print(f"✅ Subscribed {len(new_tokens)} tokens for user {user_id}")
+    for token in tokens:
+        subscribe(ws, 1, token)  
 
 
 def on_open(ws):
     print("🔗 WebSocket Connected")
-
-    # Subscribe when socket opens
-    subscribe(ws, 1, "99926009")  # BANKNIFTY
-    subscribe(ws, 1, "99926013")  # FINNIFTY
-    subscribe(ws, 2, "99919000")    # SENSEX
-    subscribe(ws, 1, "99926000")   # NIFTY
 
 
 def subscribe(ws, exchange, token):
