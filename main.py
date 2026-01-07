@@ -1,6 +1,7 @@
 # main.py
 
-from app import app, socketio
+from app import app
+from extensions import socketio
 from service.angle_service import start_angel_one
 
 from utils.market_time import is_market_open
