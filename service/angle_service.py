@@ -2,9 +2,10 @@ import pyotp
 from SmartApi import SmartConnect
 
 from config import API_KEY, CLIENT_ID, CLIENT_PASSWORD, TOTP_SECRET
-from websockets.angle_ws import start_websocket
+from websockets.angle_ws import subscribe_user_watchlist;
 from service.market_data_service import get_full_market_data
 from data.live_data import BASELINE_DATA
+from websockets.angle_ws import start_websocket
 
 
 def start_angel_one():

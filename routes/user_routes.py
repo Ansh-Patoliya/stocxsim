@@ -1,6 +1,9 @@
 from flask import Blueprint, request, jsonify,session,redirect, render_template
 from modal.User import User
 from service.userservice import login_service, signup_service , verify_otp, send_otp, getUserDetails
+from websockets.angle_ws import subscribe_user_watchlist
+from database.user_stock_dao import get_stock_tokens_by_user 
+
 
 user_bp = Blueprint('user_bp', __name__)
     
@@ -18,10 +21,16 @@ def save_user():
     print(f'User fetched: {user.get_email()}, {user.get_password()}')
     if user.get_password() != password:
         return jsonify({"success": False})
+    
     session['logged_in'] = True
     session['email'] = user.get_email()
     session['username'] = user.get_username()
     session['user_id'] = user.get_user_id()
+
+    # 🔥 SUBSCRIBE USER WATCHLIST
+    user_id = user.get_user_id()
+    tokens = get_watchlist_tokens(user_id)   # e.g. 20 tokens
+    subscribe_user_watchlist(user_id, tokens)
     return jsonify({"success": True})
 
 
