@@ -23,6 +23,23 @@ socket.on("live_prices", function (data) {
   }
 });
 
+
+// listen for price updates
+socket.on("price_update", data => {
+    const token = data.token;
+    const ltp = data.ltp;
+
+    // find ticker by token id
+    const ticker = document.getElementById(token);
+    if (!ticker) return;
+
+    // update price
+    const priceDiv = ticker.querySelector(".price");
+    if (priceDiv) {
+        priceDiv.innerText = "₹" + ltp.toFixed(2);
+    }
+});
+
 function updateUI(token, info) {
   const el = document.getElementById(token);
   if (!el) return;
