@@ -7,14 +7,26 @@ from service.market_data_service import get_full_market_data
 from data.live_data import BASELINE_DATA
 from websockets.angle_ws import start_websocket
 
+angel_started = False
+angel_obj = None
 
 def start_angel_one():
+    global angel_started, angel_obj
+
+    if angel_started:
+        print("⚠️ Angel already started, skipping login")
+        return
+
     print("🔐 Logging in to Angel One...")
 
-    obj = SmartConnect(api_key=API_KEY)
-    totp = pyotp.TOTP(TOTP_SECRET).now()
-
-    session = obj.generateSession(CLIENT_ID, CLIENT_PASSWORD, totp)
+    try:
+        obj = SmartConnect(api_key=API_KEY)
+        totp = pyotp.TOTP(TOTP_SECRET).now()
+        session = obj.generateSession(CLIENT_ID, CLIENT_PASSWORD, totp)
+    except Exception as e:
+        print("❌ Angel login blocked / rate limited")
+        print(str(e))
+        return   # 👈 IMPORTANT: do NOT retry
 
     if not session or not session.get("status"):
         print("❌ Angel One Login Failed")
@@ -22,9 +34,11 @@ def start_angel_one():
 
     print("✅ Angel One Login Successful")
 
-    TOKENS = ["99926000", "1594", "3045"]  # NIFTY, INFY, SBIN
+    angel_obj = obj
+    angel_started = True
+
+    TOKENS = ["99926000", "1594", "3045"]
     BASELINE_DATA.update(get_full_market_data(TOKENS))
-    print("📊 Baseline data loaded")
 
     feed_token = obj.getfeedToken()
     jwt_token = session["data"]["jwtToken"]

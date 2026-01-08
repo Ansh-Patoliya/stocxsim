@@ -1,0 +1,124 @@
+.groww-card {
+     background: #fff;
+     border-radius: 16px;
+     border: 1px solid #eef0f4;
+     overflow: hidden;
+}
+
+/* Header */
+.groww-header {
+     padding: 16px 20px;
+     border-bottom: 1px solid #eef0f4;
+}
+
+.active-tab {
+     font-weight: 600;
+     position: relative;
+}
+
+.active-tab::after {
+     content: "";
+     position: absolute;
+     left: 0;
+     bottom: -16px;
+     width: 100%;
+     height: 2px;
+     background: #111827;
+}
+
+.add-watchlist {
+     color: #16a34a;
+     font-weight: 500;
+     cursor: pointer;
+}
+
+/* Search */
+.search-input {
+     max-width: 320px;
+     border-radius: 10px;
+}
+
+/* Table */
+.groww-table thead th {
+     background-color: #0f0f0f0f !important;
+     /* padding: 12px !important; */
+     font-size: 12px;
+     color: #6b7280;
+     font-weight: 500;
+     border-bottom: 1px solid #eef0f4;
+     padding: 14px 20px;
+}
+
+.groww-table tbody td {
+     padding: 16px 20px;
+     font-size: 14px;
+     vertical-align: middle;
+}
+
+.groww-table tbody tr {
+     border-bottom: 1px solid #f1f3f6;
+     transition: background 0.2s ease;
+}
+
+.groww-table tbody tr:hover {
+     background: #f9fafb;
+}
+
+/* Horizontal scroll like Groww */
+.table-scroll {
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Prevent table from squeezing */
+.groww-table {
+  min-width: 700px;
+}
+
+/* Company */
+.company-cell {
+     display: flex;
+     align-items: center;
+     gap: 12px;
+}
+
+.logo {
+     width: 36px;
+     height: 36px;
+     border-radius: 8px;
+     background: #e5f0ff;
+     color: #2563eb;
+     display: flex;
+     align-items: center;
+     justify-content: center;
+     font-weight: 700;
+}
+
+.logo.dark {
+     background: #111827;
+     color: #fff;
+}
+
+.company-name {
+     font-weight: 500;
+}
+
+/* Trend */
+.trend {
+     font-size: 18px;
+}
+
+.trend.up {
+     color: #16a34a;
+}
+
+.trend.down {
+     color: #ef4444;
+}
+
+/* 52W perf */
+.perf {
+     font-size: 12px;
+     color: #6b7280;
+}

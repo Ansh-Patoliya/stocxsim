@@ -42,7 +42,7 @@ def subscribe_user_watchlist(user_id, tokens):
     print(f"🔔 Subscribing user {user_id} watchlist:", tokens)
 
     for token in tokens:
-        subscribe(ws, 1, token)  
+        subscribe(ws, 1, token)
 
 
 def on_open(ws):
@@ -62,7 +62,7 @@ def subscribe(ws, exchange, token):
     ]
 
     print("👉 Sending subscribe:", token_list)
-    ws.subscribe("stockxsim",exchange, token_list)
+    ws.subscribe("stockxsim", exchange, token_list)
 
     subscribed_tokens.add(token)
     print(f"✅ Subscribed to {token}")
@@ -72,6 +72,14 @@ def on_data(ws, message):
     token = message["token"]
     ltp = message["last_traded_price"] / 100
 
+    # STORE price in memory
+    LIVE_PRICES[token] = ltp
+
+    # SEND price to browser
+    socketio.emit("price_update", {
+        "token": token,
+        "ltp": ltp
+    })
     print("📩 TICK:", token, ltp)
 
 
