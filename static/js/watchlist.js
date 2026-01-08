@@ -13,7 +13,7 @@ fetch("/stocks/watchlist")
       row.innerHTML = `
         <td>
           <div class="company-cell">
-            <div class="logo">${String(stock.token)[0]}</div>
+            <div class="logo">${stock.name ? stock.name[0].toUpperCase() : "?"}</div>
             <div>
               <div class="company-name">${stock.name}</div>
             </div>
@@ -21,19 +21,21 @@ fetch("/stocks/watchlist")
         </td>
 
         <td>
-          <span class="trend ${isUp ? "up" : "down"}">〰</span>
+          <span class="trend ${isUp ? "up" : "down"}">
+                ${isUp ? "↗" : "↘"}
+          </span>
         </td>
 
         <td class="text-end">
           ${typeof stock.price === "number"
-            ? "₹" + stock.price.toFixed(2)
-            : "--"}
+          ? "₹" + stock.price.toFixed(2)
+          : "--"}
         </td>
 
         <td class="text-end ${isUp ? "text-success" : "text-danger"}">
           ${typeof stock.change === "number"
-            ? `${isUp ? "+" : ""}${stock.change} (${stock.change_pct}%)`
-            : "--"}
+          ? `${isUp ? "+" : ""}${stock.change} (${stock.change_pct}%)`
+          : "--"}
         </td>
 
         <td class="text-end">--</td>
