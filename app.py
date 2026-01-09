@@ -31,27 +31,3 @@ def on_connect():
             
     #         "index": BASELINE_DATA
     #     })
-
-
-    """
-    data={
-        "stocks": {
-                token:{
-                    ltp:123,
-                    change:1.23,
-                    percent_change:0.56
-                },
-                token:{
-                    ltp:123,
-                    change:1.23,
-                    percent_change:0.56
-                }
-
-        },
-        "index": {
-            ltp:12345,
-            change:123,
-            percent_change:0.89
-        }
-    }
-    """

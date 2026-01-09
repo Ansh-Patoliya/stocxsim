@@ -113,9 +113,22 @@ function buildTable(stocks) {
   const tbody = document.getElementById("watchlistBody");
   tbody.innerHTML = "";
 
-  stocks.forEach(stock => {
-    const row = document.createElement("tr");
-    row.id = "token-" + stock.token;
+    stocks.forEach(stock => {
+      const isUp = stock.change >= 0;
+
+      const row = document.createElement("tr");
+      row.id = "token-" + stock.token;
+      row.style.cursor = "pointer";
+
+      // 🔥 CLICK EVENT
+      row.addEventListener("click", () => {
+        const params = new URLSearchParams({
+          token: stock.token,
+          name: stock.name
+        });
+
+        window.location.href = `/stocks/${stock.token}`;
+      });
 
     row.innerHTML = `
       <td>

@@ -94,7 +94,6 @@ def on_data(ws, message):
         print("WS ERROR:", e)
 
 
-
 def on_error(ws, error):
     print("❌ WebSocket Error:", error)
 
