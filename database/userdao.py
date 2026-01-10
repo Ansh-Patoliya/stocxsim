@@ -49,3 +49,13 @@ def getUserByEmail(email):
     else:
         return None
     
+def checkBalance(user_id):
+    query = "SELECT balance FROM users WHERE user_id = %s"
+    cur=gc().cursor()
+    cur.execute(query, (user_id,))
+    result = cur.fetchone()
+    if result is not None:
+        balance=result[0]
+        return balance
+    else:
+        return None
