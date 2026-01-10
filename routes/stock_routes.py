@@ -29,10 +29,6 @@ def stock_detail(stock_token):
     return render_template("stock.html", stock=stock)
 
 
-@stock_bp.route("/watchlist-page")
-def watchlist_page():
-    return render_template("watchlist.html")
-
 
 @stock_bp.route("/watchlist")
 def api_watchlist():
