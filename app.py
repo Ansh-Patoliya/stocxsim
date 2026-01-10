@@ -2,9 +2,9 @@
 from flask import Flask, render_template
 from extensions import socketio
 from routes.user_routes import user_bp
-from data.live_data import LIVE_STOCKS, LIVE_INDEX,BASELINE_DATA
 from routes.stock_routes import stock_bp
-from utils.market_time import is_market_open
+from routes.trade_routes import trade_bp
+from data.live_data import LIVE_STOCKS, LIVE_INDEX
 
 app = Flask(__name__)
 app.secret_key = "an12eadf234f"
@@ -12,6 +12,7 @@ app.secret_key = "an12eadf234f"
 socketio.init_app(app)
 app.register_blueprint(user_bp, url_prefix="/login")
 app.register_blueprint(stock_bp, url_prefix="/stocks")
+app.register_blueprint(trade_bp, url_prefix="/trade")
 @app.route("/")
 def home():
     return render_template("home.html")
