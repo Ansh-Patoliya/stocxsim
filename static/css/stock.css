@@ -170,6 +170,11 @@
             color: var(--primary-green);
             border-bottom: 2px solid var(--primary-green);
         }
+        .tab.sell-active {
+            color: #ff4d4d; /* SELL red */
+    border-bottom: 2px solid #ff4d4d !important; /* SELL red */
+}
+
 
         .order-type-chips {
             display: flex;
@@ -234,6 +239,15 @@
             font-weight: bold;
             cursor: pointer;
         }
-        .buy-btn.sell-mode {
-            background-color: #eb5b3c; /* Red for Sell */
+        .sell-btn {
+            width: 100%;
+            background-color: #ff4d4d; /* SELL red */
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
         }
+        
