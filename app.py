@@ -16,7 +16,6 @@ app.register_blueprint(user_bp, url_prefix="/login")
 app.register_blueprint(stock_bp, url_prefix="/stocks")
 app.register_blueprint(trade_bp, url_prefix="/trade")
 app.register_blueprint(holding_bp, url_prefix="/holding")
-app.register_blueprint(orders_bp,url_prefix="/login")
 @app.route("/")
 def home():
     return render_template("home.html")
