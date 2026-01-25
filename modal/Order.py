@@ -43,3 +43,20 @@ class Order:
     
     def get_order_id(self):
         return self.order_id
+
+
+    # -------- JSON Serializer (IMPORTANT) --------
+    def to_dict(self):
+        return {
+            "order_id": self.order_id,
+            "symbol": str(self.symbol_token),  # later map token → name
+            "transaction_type": self.transaction_type,
+            "price": float(self.price),
+            "quantity": int(self.quantity),
+            "order_type": self.order_type,
+            "product": "REGULAR",
+            "time": (
+                self.created_at.strftime("%I:%M %p")
+                if self.created_at else ""
+            )
+        }

@@ -14,7 +14,7 @@ def place_trade_order():
 
         symbol_token = data.get("symbol_token")
         quantity = data.get("quantity")
-        quantity = int(quantity) if quantity else 0
+        quantity = Decimal(quantity) if quantity else Decimal("0")
         order_type = data.get("order_type")
         price = data.get("price")
         price = Decimal(price) if price else None
