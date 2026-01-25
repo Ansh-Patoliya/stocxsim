@@ -103,3 +103,20 @@ def watchlist():
         user=user,
         active_tab="watchlist"
     )
+
+@user_bp.route("/orders")
+def orders():
+    if not session.get("logged_in"):
+        return redirect("/login")
+
+    user = {
+        "username": session.get("username"),
+        "email": session.get("email"),
+        "balance": session.get("balance", 0)
+    }
+
+    return render_template(
+        "orders.html",
+        user=user,
+        active_tab="orders"
+    )

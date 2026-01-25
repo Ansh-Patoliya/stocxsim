@@ -15,12 +15,12 @@ def search_stocks_service(query):
 
 # New service function to get stock details by symbol
 def get_stock_detail_service(stock_token):
-    row = get_stock_by_token(stock_token)
+     row = get_stock_by_token(stock_token)
 
-    if not row:
+     if not row:
         return None
 
-    return Stock(
-        stock_token=row[0],
-        stock_name=row[1]
-    )
+     return Stock(
+          stock_token=row[0],
+          stock_name=row[1]
+     )
