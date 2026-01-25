@@ -51,7 +51,7 @@
             </div>
 
             <div class="tabs">
-                <div class="tab active" id="buy-tab" >BUY</div>
+                <div class="tab active" id="buy-tab">BUY</div>
                 <div class="tab" id="sell-tab">SELL</div>
             </div>
 
@@ -66,8 +66,8 @@
             </div>
 
             <div class="input-group">
-                <label>Price <b id="orderTypeText">Limit</b> ▾</label>
-                <input id="price" type="text" value="190.7">
+                <label id="priceTypeToggle" style="cursor:pointer;">Price <b id="orderTypeText">Limit</b> ▾</label>
+                <input id="price" type="text">
             </div>
 
             <div class="footer-info">
@@ -117,6 +117,8 @@
 
             const isUp = stock.change >= 0;
             const sign = isUp ? "+" : "";
+            window.lastLTP = stock.ltp;
+
 
             // 🔹 Price
             priceEl.innerText = "₹" + stock.ltp.toFixed(2);
@@ -136,109 +138,135 @@
                     (${sign}${stock.percent_change.toFixed(2)}%)
                     </span>
                 `;
-            document.getElementById("price").value = stock.ltp.toFixed(2);
+            if (orderType === "limit") {
+                priceInput.value = stock.ltp.toFixed(2);
+            }
 
-        }    
-    // =========================
-    // GLOBAL STATE
-    // =========================
-    let transactionType = "buy";     // buy | sell
-    let orderType = "limit";         // limit | market
-
-    const buyTab = document.getElementById("buy-tab");
-    const sellTab = document.getElementById("sell-tab");
-    const submitBtn = document.getElementById("submitOrderBtn");
-
-    // =========================
-    // BUY TAB
-    // =========================
-    buyTab.addEventListener("click", () => {
-        transactionType = "buy";
-
-        buyTab.classList.add("active");
-        sellTab.classList.remove("active", "sell-active");
-
-        submitBtn.innerText = "Buy";
-        submitBtn.classList.remove("sell-btn");
-        submitBtn.classList.add("buy-btn");
-    });
-
-    // =========================
-    // SELL TAB
-    // =========================
-    sellTab.addEventListener("click", () => {
-        transactionType = "sell";
-
-        sellTab.classList.add("active", "sell-active");
-        buyTab.classList.remove("active");
-
-        submitBtn.innerText = "Sell";
-        submitBtn.classList.remove("buy-btn");
-        submitBtn.classList.add("sell-btn");
-    });
-
-    // =========================
-    // SUBMIT ORDER
-    // =========================
-    submitBtn.addEventListener("click", function () {
-
-        // 🔐 Snapshot (race condition avoid)
-        const currentTransactionType = transactionType;
-        const currentOrderType = orderType;
-
-        const qtyValue = document.getElementById("qty").value.trim();
-        const priceValue = document.getElementById("price").value.trim();
-
-        // =========================
-        // VALIDATION
-        // =========================
-        if (!qtyValue || isNaN(qtyValue) || Number(qtyValue) <= 0) {
-            alert("❌ Valid quantity aapo");
-            return;
         }
+        // =========================
+        // GLOBAL STATE
+        // =========================
+        let transactionType = "buy";     // buy | sell
+        let orderType = "limit";         // limit | market
 
-        if (currentOrderType === "limit") {
-            if (!priceValue || isNaN(priceValue) || Number(priceValue) <= 0) {
-                alert("❌ Valid price aapo");
+        const buyTab = document.getElementById("buy-tab");
+        const sellTab = document.getElementById("sell-tab");
+        const submitBtn = document.getElementById("submitOrderBtn");
+
+        // =========================
+        // BUY TAB
+        // =========================
+        buyTab.addEventListener("click", () => {
+            transactionType = "buy";
+
+            buyTab.classList.add("active");
+            sellTab.classList.remove("active", "sell-active");
+
+            submitBtn.innerText = "Buy";
+            submitBtn.classList.remove("sell-btn");
+            submitBtn.classList.add("buy-btn");
+        });
+
+        // =========================
+        // SELL TAB
+        // =========================
+        sellTab.addEventListener("click", () => {
+            transactionType = "sell";
+
+            sellTab.classList.add("active", "sell-active");
+            buyTab.classList.remove("active");
+
+            submitBtn.innerText = "Sell";
+            submitBtn.classList.remove("buy-btn");
+            submitBtn.classList.add("sell-btn");
+        });
+
+        // =========================
+        // SUBMIT ORDER
+        // =========================
+        submitBtn.addEventListener("click", function () {
+
+            // 🔐 Snapshot (race condition avoid)
+            const currentTransactionType = transactionType;
+            const currentOrderType = orderType;
+
+            const qtyValue = document.getElementById("qty").value.trim();
+            const priceValue = document.getElementById("price").value.trim();
+
+            // =========================
+            // VALIDATION
+            // =========================
+            if (!qtyValue || isNaN(qtyValue) || Number(qtyValue) <= 0) {
+                alert("❌ Valid quantity aapo");
                 return;
             }
-        }
 
-        const payload = {
-            symbol_token: STOCK_TOKEN,
-            quantity: Number(qtyValue),                 // number j jaay
-            order_type: currentOrderType,
-            price: currentOrderType === "market" ? "" : priceValue,
-            transaction_type: currentTransactionType
-        };
-
-        fetch("/trade/order", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/x-www-form-urlencoded"
-            },
-            body: new URLSearchParams(payload)
-        })
-        .then(res => res.json())
-        .then(data => {
-            console.log("ORDER RESPONSE:", data);
-
-            if (data.error) {
-                alert("❌ " + data.error);
-            } else {
-                alert("✅ " + data.message);
-
-                // optional reset
-                document.getElementById("qty").value = "";
-
+            if (currentOrderType === "limit") {
+                if (!priceValue || isNaN(priceValue) || Number(priceValue) <= 0) {
+                    alert("❌ Valid price aapo");
+                    return;
+                }
             }
-        })
-        .catch(err => {
-            console.error("Order error:", err);
-            alert("⚠️ Something went wrong!");
+
+            const payload = {
+                symbol_token: STOCK_TOKEN,
+                quantity: Number(qtyValue),                 // number j jaay
+                order_type: currentOrderType,
+                price: currentOrderType === "market" ? "" : priceValue,
+                transaction_type: currentTransactionType
+            };
+
+            fetch("/trade/order", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+                body: new URLSearchParams(payload)
+            })
+                .then(res => res.json())
+                .then(data => {
+                    console.log("ORDER RESPONSE:", data);
+
+                    if (data.error) {
+                        alert("❌ " + data.error);
+                    } else {
+                        alert("✅ " + data.message);
+
+                        // optional reset
+                        document.getElementById("qty").value = "";
+
+                    }
+                })
+                .catch(err => {
+                    console.error("Order error:", err);
+                    alert("⚠️ Something went wrong!");
+                });
         });
-    });
-</script>
+        const priceInput = document.getElementById("price");
+        const orderTypeText = document.getElementById("orderTypeText");
+        const priceToggle = document.getElementById("priceTypeToggle");
+
+        priceToggle.addEventListener("click", () => {
+            if (orderType === "limit") {
+                // 👉 LIMIT → MARKET
+                orderType = "market";
+                orderTypeText.innerText = "Market";
+
+                priceInput.value = window.lastLTP.toFixed(2);
+                priceInput.disabled = true;
+            } else {
+                // 👉 MARKET → LIMIT
+                orderType = "limit";
+                orderTypeText.innerText = "Limit";
+
+                priceInput.disabled = false;
+
+                // current price muki do
+                priceInput.value = window.lastLTP.toFixed(2);
+            }
+        });
+
+    </script>
 
 </body>
 
