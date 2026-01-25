@@ -29,16 +29,13 @@ def get_order(user_id,filter_params=None):
     conn = get_connection()
     cursor = conn.cursor()
 
-    
-    filter_params = {
-        "from_date": "2024-01-01",
-        "to_date": "2024-01-25",
-        "transaction_type": ["BUY", "SELL"]
-    }
     query = "SELECT order_id, symbol_token, transaction_type, quantity, price, order_type, created_at FROM orders WHERE user_id = %s"
     if filter_params:
         conditions = []
         values = [user_id]
+
+        if not filter_params:
+            filter_params = {}
 
         # Case 1: From exists but To missing → set To = Today
         if "from_date" in filter_params and not "to_date" in filter_params:
@@ -83,9 +80,9 @@ def get_order(user_id,filter_params=None):
             stack.push(order)
         cursor.close()
         conn.close()
-        return stack
-        
 
+        # print("Filtered Orders Retrieved: 🔥 ", stack.display())
+        return stack
     else:
         cursor.execute(query, (user_id,))
         orders = cursor.fetchall()
@@ -104,5 +101,7 @@ def get_order(user_id,filter_params=None):
             stack.push(order)
         cursor.close()
         conn.close()
+
+        # print("All Orders Retrieved: 🔥 ", stack.display())
         return stack
     
