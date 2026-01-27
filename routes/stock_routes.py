@@ -1,8 +1,9 @@
 from flask import Blueprint, request, jsonify, render_template, session
 from database.user_stock_dao import get_stock_tokens_by_user
 from service.market_data_service import get_full_market_data
-from service.stockservice import search_stocks_service, get_stock_detail_service
+from service.stockservice import search_stocks_service, get_stock_detail_service, rsi_cal,ema_cal,get_closes
 from data.live_data import register_equity_token, LIVE_STOCKS
+from modal.Stock import Stock
 
 stock_bp = Blueprint("stock_bp", __name__)
 
@@ -20,12 +21,15 @@ def search_stocks():
 @stock_bp.route("/<stock_token>")
 def stock_detail(stock_token):
     stock = get_stock_detail_service(stock_token)
-
     if not stock:
         return render_template("404.html"), 404
 
     # 🔥 REGISTER TOKEN FOR LIVE UPDATES
     register_equity_token(str(stock_token))
+    closes=get_closes(stock_token)
+    stock.set_rsi(rsi_cal(closes))
+    stock.set_ema_9(ema_cal(closes, 9))
+    stock.set_ema_20(ema_cal(closes, 20))
     return render_template("stock.html", stock=stock)
 
 
@@ -37,6 +41,8 @@ def api_watchlist():
     # print("User ID in session:", user_id)
     if not user_id:
         return jsonify([])   # or return 401
+    
+    
 
     tokens = [str(t) for t in get_stock_tokens_by_user(user_id)]
     result = []
