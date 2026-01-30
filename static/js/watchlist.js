@@ -51,7 +51,7 @@ socket.on("connect", () => {
 //     });
 //   });
 // Page load
-fetch("/stocks/watchlist")
+fetch("/watchlist/api")
   .then(res => res.json())
   .then(stocks => {
     buildTable(stocks);

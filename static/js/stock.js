@@ -1,8 +1,19 @@
-const STOCK_TOKEN = "{{ stock.stock_token }}";
+// const STOCK_TOKEN = "{{ stock.stock_token }}";
+const STOCK_TOKEN = document.body.dataset.stockToken;
 const STOCK_NAME = "{{ stock.stock_name }}";
+// Grab the watchlist as a JSON string from template
+const watchlistTokens = '{{ watchlist_tokens | default([]) | tojson | safe }}';
+
+// Example usage
+const stockToken = document.body.dataset.stockToken;
+let isWatchlisted = watchlistTokens.includes(stockToken);
+console.log("Watchlist:", watchlistTokens, "Is watchlisted?", isWatchlisted);
 
 const socket = io();
 
+// =========================
+// SOCKET EVENTS
+// =========================
 socket.on("connect", () => {
      console.log("✅ Socket connected:", socket.id);
 });
@@ -34,6 +45,10 @@ socket.on("live_prices", (data) => {
      // updateIndexUI("26009", data.index["26009"]);
 });
 
+
+// =========================
+// UPDATE STOCK UI
+// =========================
 function updateStockUI(stock) {
      const priceEl = document.getElementById("currentPrice");
      const changeEl = document.getElementById("priceChange");
@@ -172,6 +187,9 @@ const priceInput = document.getElementById("price");
 const orderTypeText = document.getElementById("orderTypeText");
 const priceToggle = document.getElementById("priceTypeToggle");
 
+// =========================
+// PRICE TYPE TOGGLE
+// =========================
 priceToggle.addEventListener("click", () => {
      if (orderType === "limit") {
           // 👉 LIMIT → MARKET
@@ -261,6 +279,9 @@ setGauge(gaugeValue);
 // console.log("EMA 20:", EMA_20, "Price:", PRICE);
 
 
+// =========================
+// EMA GAUGE
+// =========================
 function setEmaGauge(price, ema20) {
      console.log("EMA DEBUG → price:", price, "ema20:", ema20);
 
@@ -282,7 +303,9 @@ function setEmaGauge(price, ema20) {
      updateEmaLabel(value);
 }
 
-
+// =========================
+// EMA LABEL UPDATE
+// =========================
 function updateEmaLabel(gaugeValue) {
      const label = document.getElementById('label-ema20');
      let text, colorClass;
@@ -309,7 +332,9 @@ function updateEmaLabel(gaugeValue) {
 }
 
 
-
+// =========================
+// EMA TO GAUGE VALUE
+// =========================
 function emaToGaugeValue(price, ema20) {
      let pct = ((price - ema20) / ema20) * 100; // % distance
 
@@ -319,3 +344,70 @@ function emaToGaugeValue(price, ema20) {
      // Map -2% → -100, 0 → 0, +2% → +100
      return (pct / 2) * 100;
 }
+
+// =========================
+// UNSUBSCRIBE ON PAGE UNLOAD
+// =========================
+
+document.addEventListener("DOMContentLoaded", () => {
+     if (!STOCK_TOKEN) return;
+
+     fetch(`/stocks/subscribe/${STOCK_TOKEN}`, {
+          method: "POST"
+     })
+          .then(() => console.log("✅ Subscribed:", STOCK_TOKEN))
+          .catch(() => console.warn("❌ Subscribe failed"));
+});
+
+window.addEventListener("beforeunload", () => {
+     if (!STOCK_TOKEN) return;
+     if (!watchlistTokens.includes(STOCK_TOKEN)) {
+          navigator.sendBeacon(`/stocks/unsubscribe/${STOCK_TOKEN}`);
+          console.log("❌ Unsubscribed:", STOCK_TOKEN);
+     } else {
+          console.log("⏸ Stock in watchlist, keeping subscription:", STOCK_TOKEN);
+     }
+});
+
+
+// =========================
+// WATCHLIST BUTTON
+// =========================
+
+document.addEventListener("DOMContentLoaded", () => {
+     const watchlistBtn = document.getElementById("watchlistBtn");
+     const watchlistText = document.getElementById("watchlistText");
+
+     const stockToken = document.body.dataset.stockToken;
+     let isWatchlisted = watchlistTokens.includes(stockToken);
+
+     // Initial check (optional but recommended)
+     fetch(`/watchlist/status/${stockToken}`)
+          .then(res => res.json())
+          .then(data => {
+               isWatchlisted = data.watchlisted;
+               updateWatchlistUI();
+          });
+
+     watchlistBtn.addEventListener("click", () => {
+          fetch(`/watchlist/toggle/${stockToken}`, {
+               method: "POST",
+               headers: { "Content-Type": "application/json" }
+          })
+               .then(res => res.json())
+               .then(data => {
+                    isWatchlisted = data.watchlisted;
+                    updateWatchlistUI();
+               });
+     });
+
+     function updateWatchlistUI() {
+          if (isWatchlisted) {
+               watchlistBtn.classList.add("active");
+               watchlistText.innerText = "Remove";
+          } else {
+               watchlistBtn.classList.remove("active");
+               watchlistText.innerText = "Watchlist";
+          }
+     }
+});

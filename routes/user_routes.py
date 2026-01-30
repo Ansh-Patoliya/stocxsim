@@ -3,7 +3,7 @@ from modal.User import User
 from service.userservice import login_service, signup_service, verify_otp, send_otp, getUserDetails
 from websockets.angle_ws import subscribe_user_watchlist
 from data.live_data import BASELINE_DATA
-from database.user_stock_dao import get_stock_tokens_by_user
+from database.watchlist_dao import get_stock_tokens_by_user
 from service.market_data_service import get_full_market_data, load_baseline_data
 
 
