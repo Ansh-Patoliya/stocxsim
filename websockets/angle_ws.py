@@ -103,16 +103,6 @@ def on_data(ws, message):
         else:
             LIVE_STOCKS[token].update(data)
 
-<<<<<<< HEAD
-        # print(f"LIVE INDEX: {LIVE_INDEX}")
-        # print(f"LIVE STOCKS: {LIVE_STOCKS}")
-
-        # Emit updated live prices to all connected clients
-        socketio.emit("live_prices", {
-            "stocks": LIVE_STOCKS,
-            "index": LIVE_INDEX
-        })
-=======
         # Throttle emissions to reduce network overhead
         current_time = time() * 1000
         if current_time - last_emit_time > EMIT_THROTTLE_MS:
@@ -121,7 +111,6 @@ def on_data(ws, message):
                 "stocks": LIVE_STOCKS,
                 "index": LIVE_INDEX
             })
->>>>>>> d206d5cfef5027407e150ad8635065554b94b07c
 
     except Exception as e:
         print("WS ERROR:", e)
