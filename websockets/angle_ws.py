@@ -82,6 +82,28 @@ def subscribe(ws, exchange, token):
     subscribed_tokens.add(token)
     print(f"✅ Subscribed to {token}")
 
+
+def unsubscribe(ws, exchange, token):
+    global subscribed_tokens
+
+    if token not in subscribed_tokens:
+        print(f"⚠️ Not subscribed {token}, skipping unsubscribe")
+        return
+
+    token_list = [
+        {
+            "exchangeType": exchange,
+            "tokens": [token]
+        }
+    ]
+
+    print("👈 Sending unsubscribe:", token_list)
+    ws.unsubscribe("stockxsim", exchange, token_list)
+
+    subscribed_tokens.remove(token)
+    print(f"❌ Unsubscribed from {token}")
+
+
 def on_data(ws, message):
     try:
         global last_emit_time
