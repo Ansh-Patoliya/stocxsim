@@ -1,5 +1,5 @@
 
-// --- Dashboard.js: Refactored for single source of truth, correct totals, and no race/overwrite ---
+
 
 // Only run Socket.IO if on holdings page (detect by .holding-row or #holdingsTable)
 const isHoldingsPage = document.querySelector('.holding-row') || document.getElementById('holdingsTable');
@@ -8,47 +8,92 @@ if (isHoldingsPage) {
      // create socket ONLY ONCE
      const socket = io();
 
-     socket.on("connect", () => {
-          console.log("✅ Socket connected, id =", socket.id);
-     });
 
-     socket.on("disconnect", () => {
-          console.log("❌ Socket disconnected");
-     });
+     // Merge stock prices into the global object
+     if (data.stocks) {
+          Object.assign(latestPrices, data.stocks);
+     }
+     // Merge index prices as well
+     if (data.index) {
+          Object.assign(latestPrices, data.index);
+     }
 
-     socket.on("live_prices", function (data) {
-          // Only update holdings page, not dashboard
-          updateHoldingsLivePrices(data.stocks);
-     });
+     // INDEX UPDATE
+     for (const token in data.index) {
+          for (const token in data.index) updateUI(token, data.index[token]);
+     }
+
+     // STOCK UPDATE
+     for (const token in data.stocks) {
+          for (const token in data.stocks) updateUI(token, data.stocks[token]);
+     }
+});
+
+// update UI for a stock/index
+function updateUI(token, info) {
+     const el = document.getElementById(token);
+     if (!el) return;
+
+     const priceEl = el.querySelector(".price");
+     const changeEl = el.querySelector(".change");
+
+     if (priceEl) priceEl.innerText = info.ltp.toFixed(2);
+
+     if (changeEl) {
+          const sign = info.change >= 0 ? "+" : "";
+          changeEl.innerText =
+               `${sign}${info.change.toFixed(2)} (${info.percent_change.toFixed(2)}%)`;
+
+          changeEl.classList.remove("up", "down");
+          changeEl.classList.add(info.change >= 0 ? "up" : "down");
+     }
 }
 
 // --- Dashboard Watchlist ---
 const row = document.getElementById("stocksRow");
-if (row) {
-     fetch("/stocks/watchlist")
-          .then(res => res.json())
-          .then(stocks => {
-               buildDashboardWatchlist(stocks);
+
+
+// fetch watchlist stocks from backend
+fetch("/watchlist/api")
+     .then(res => res.json())
+     .then(stocks => {
+          buildDashboardWatchlist(stocks);
+
+          // apply prices if socket already came
+          console.log("Building UI, filling cached prices:", latestPrices);
+          Object.keys(latestPrices).forEach(token => {
+               updateUI(token, latestPrices[token]);
           });
 }
 
 function buildDashboardWatchlist(stocks) {
+     if (!row) return;
      row.innerHTML = "";
      stocks.forEach(stock => {
+
+          if (stock.category === 'INDEX') {
+               return; // Skip this iteration
+          }
+
           const wrapper = document.createElement("div");
           wrapper.className = "watchlist-item";
           row.style.cursor = "pointer";
+
+
           wrapper.innerHTML = `
-               <div class="stock_card p-3" id="${stock.token}">
-                    <div class="stock_name mb-2">${stock.name}</div>
-                    <div class="stock_price price">--</div>
-                    <div class="stock_change change">--</div>
-               </div>
+          <div class="stock_card p-3" id="${String(stock.token)}">
+          <div class="stock_name mb-2">${stock.name}</div>
+          <div class="stock_price price">--</div>
+          <div class="stock_change change">--</div>
+          </div>
           `;
+
+          // click → stock detail
           wrapper.addEventListener("click", (e) => {
-               e.stopPropagation();
+               e.stopPropagation(); // safety
                window.location.href = `/stocks/${stock.token}`;
           });
+
           row.appendChild(wrapper);
      });
 }
