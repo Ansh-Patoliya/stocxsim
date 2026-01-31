@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="/static/css/stock.css">
 </head>
 
-<body>
+<body data-stock-token="{{ stock.stock_token }}">
 
     <div id="stockPage"
          data-stock-token="{{ stock.stock_token }}"
@@ -26,7 +26,7 @@
             <div class="header-top">
                 <div class="stock-logo">{{ stock.stock_name[0] }}</div>
                 <div class="action-buttons">
-                    <button><i class="bi bi-bookmark"></i> Watchlist</button>
+                    <button id="watchlistBtn"><i class="bi bi-bookmark"></i><span id="watchlistText">Watchlist</span>s</button>
                 </div>
             </div>
 

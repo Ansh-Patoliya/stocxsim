@@ -2,8 +2,10 @@ from flask import Blueprint, request, jsonify, session, redirect, render_templat
 import threading
 from modal.User import User
 from service.userservice import login_service, signup_service, verify_otp, send_otp, getUserDetails
-from websockets.angle_ws import subscribe_equity_tokens
-from data.live_data import register_equity_token, ensure_baseline_data
+from database.watchlist_dao import get_stock_tokens_by_user
+from service.market_data_service import get_full_market_data, load_baseline_data
+from websockets.angle_ws import subscribe_equity_tokens, subscribe_user_watchlist
+from data.live_data import register_equity_token, ensure_baseline_data, BASELINE_DATA
 from database.user_stock_dao import get_stock_tokens_by_user
 
 
