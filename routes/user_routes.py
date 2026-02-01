@@ -134,3 +134,9 @@ def orders():
         user=user,
         active_tab="orders"
     )
+
+
+@user_bp.route('/logout', methods=['POST'])
+def logout():
+    session.clear() 
+    return jsonify({"success": True}), 200
