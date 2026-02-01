@@ -22,11 +22,16 @@
         </div>
         <!-- STOCK STATS MINI BUTTONS -->
         <div class="watchlist-actions">
-          <button class="mini-btn weekly">📊 Weekly Orders</button>
-          <button class="mini-btn win">🥧 Win Rate</button>
-          <button class="mini-btn pl">💹 Profit / Loss</button>
-          <button class="mini-btn top">📈 Top Traded</button>
+          <button class="mini-btn" onclick="loadChart('weekly')">📊 Weekly Orders</button>
+          <button class="mini-btn" onclick="loadChart('win')">🥧 Win Rate</button>
+          <button class="mini-btn" onclick="loadChart('pl')">💹 Profit / Loss</button>
+          <button class="mini-btn" onclick="loadChart('top')">📈 Top Traded</button>
         </div>
+        <div class="card">
+            <div id="chartTitle" class="p-3 pb-0 fw-semibold" style="color:#44475b">Chart</div>
+            <img id="chartImage" />
+        </div>
+
       </main>
 
       <!-- RIGHT SIDEBAR -->

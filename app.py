@@ -1,5 +1,5 @@
 
-from flask import Flask, render_template
+from flask import Flask, render_template, jsonify
 from extensions import socketio
 from routes.user_routes import user_bp
 from routes.stock_routes import stock_bp
@@ -29,6 +29,16 @@ app.register_blueprint(profile_bp, url_prefix="/profile")
 @app.route("/")
 def home():
     return render_template("home.html")
+
+
+@app.route("/debug/routes")
+def debug_routes():
+    """Development helper: list registered routes (useful when diagnosing 404s after code changes)."""
+    routes = []
+    for rule in sorted(app.url_map.iter_rules(), key=lambda r: r.rule):
+        methods = sorted(m for m in rule.methods if m not in {"HEAD", "OPTIONS"})
+        routes.append({"rule": rule.rule, "endpoint": rule.endpoint, "methods": methods})
+    return jsonify({"routes": routes})
 
 @socketio.on("connect")
 def on_connect():

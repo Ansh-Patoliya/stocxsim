@@ -92,3 +92,62 @@ def get_order(user_id, filter_params=None):
     finally:
         cursor.close()
         return_connection(conn)
+
+
+def get_weekly_orders(user_id):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    try:
+        query = """
+            SELECT DATE_TRUNC('week', created_at) AS week_start,
+                COUNT(order_id) AS total_orders
+                FROM orders
+                where user_id = %s
+                GROUP BY week_start
+                ORDER BY week_start;
+        """
+
+        cursor.execute(query, (user_id,))
+        orders = cursor.fetchall()
+        week_start=[order[0].strftime("%Y-%m-%d") for order in orders]
+        total_orders=[order[1] for order in orders]
+        print(f"week_start: {week_start}")
+        print(f"total_orders: {total_orders}")
+        return {
+            "week_start": week_start,
+            "total_orders": total_orders
+        }
+    finally:
+        cursor.close()
+        return_connection(conn)
+
+
+def get_orders_sorted(user_id):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    try:
+        query = """
+            SELECT symbol_token, transaction_type, quantity, price, created_at
+            FROM orders
+            WHERE user_id = %s
+            ORDER BY created_at ASC;
+        """
+
+        cursor.execute(query, (user_id,))
+        orders = cursor.fetchall()
+        order_list = []
+        for ord in orders:
+            order_list.append({
+                "symbol_token": ord[0],
+                "transaction_type": ord[1],
+                "quantity": ord[2],
+                "price": ord[3],
+                "created_at": ord[4]
+            })
+        return order_list
+
+    finally:
+        cursor.close()
+        return_connection(conn)
