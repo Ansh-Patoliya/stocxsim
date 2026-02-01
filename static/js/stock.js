@@ -437,3 +437,26 @@ document.addEventListener("DOMContentLoaded", () => {
           }
      }
 });
+
+// =========================
+// Back Button
+// =========================
+
+document.addEventListener("DOMContentLoaded", () => {
+     const closeBtn = document.getElementById("closeStockBtn");
+
+     if (!closeBtn) return;
+
+     closeBtn.addEventListener("click", () => {
+          /* document.referrer is the URL of the page that linked to this one.
+              We check if it exists and if it belongs to your website.
+           */
+          if (document.referrer && document.referrer.includes(window.location.hostname)) {
+               window.history.back();
+          } else {
+               // If they landed here from Google or a direct link, 
+               // send them to a safe default.
+               window.location.href = "/login/watchlist";
+          }
+     });
+});
