@@ -10,8 +10,6 @@ document.addEventListener("DOMContentLoaded", () => {
   // Profile dropdown
   window.toggleProfile = function () {
     const dropdown = document.getElementById("profileDropdown");
-    const Profile = document.querySelector(".profile-wrapper");
-
     if (dropdown) dropdown.classList.toggle("show");
   };
 
@@ -170,3 +168,14 @@ if (logout) {
     }
   });
 } 
+
+
+function goToProfile(e) {
+  e.stopPropagation();
+  window.location.href = "/profile";
+}
+function goToFunds() {
+  window.location.href = "/profile/funds";
+}
+
+

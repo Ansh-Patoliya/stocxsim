@@ -1,5 +1,4 @@
 from flask import Blueprint, request, jsonify, render_template, session
-
 from database.watchlist_dao import check_watchlist, get_stock_tokens_by_user
 from websockets.angle_ws import subscribe, unsubscribe, subscribe_equity_tokens
 from websockets import angle_ws
