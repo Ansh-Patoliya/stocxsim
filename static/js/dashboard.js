@@ -182,3 +182,48 @@ function updateHoldingsLivePrices(stocks) {
           // ...extend as needed for other live fields...
      });
 }
+
+
+
+function loadChart(type) {
+    let url = "";
+    let title = "";
+
+    if (type === "weekly") {
+        url = "/order/history/weekly-orders-chart";
+        title = "Weekly Orders";
+    }
+    else if (type === "win") {
+        url = "/order/history/win-rate-chart";
+        title = "Win Rate";
+    }
+    else if (type === "pl") {
+        url = "/order/history/profit-loss-chart";
+        title = "Profit / Loss";
+    }
+    else if (type === "top") {
+        url = "/order/history/top-traded-chart";
+        title = "Top Traded Stocks";
+    }
+
+          const titleEl = document.getElementById("chartTitle");
+          if (titleEl) titleEl.innerText = title;
+
+          fetch(url)
+               .then(async (res) => {
+                         if (!res.ok) {
+                                    const text = await res.text();
+                                    throw new Error(`Chart request failed (${res.status}): ${text.slice(0, 200)}`);
+                         }
+                         return res.json();
+               })
+               .then(data => {
+                         const imgEl = document.getElementById("chartImage");
+                         if (!imgEl) return;
+                         imgEl.src = "data:image/png;base64," + data.chart;
+               })
+               .catch(err => {
+                         console.error("Chart load failed:", err);
+               });
+}
+
