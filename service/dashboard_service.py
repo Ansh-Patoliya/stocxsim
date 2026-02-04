@@ -121,7 +121,7 @@ def win_rate_chart(user_id):
 
     # --- No trades case ---
     if (wins + losses) == 0:
-        fig, ax = plt.subplots(figsize=(5, 3))
+        fig, ax = plt.subplots(figsize=(4, 2))
 
         # White background
         fig.patch.set_facecolor("white")
@@ -158,6 +158,7 @@ def win_rate_chart(user_id):
         colors=colors,
         autopct="%1.1f%%",
         startangle=140,
+        radius=0.7,
         wedgeprops=dict(width=0.45, edgecolor="white")
     )
 
@@ -339,6 +340,7 @@ def top_traded_chart(user_id, limit=5):
     bars = ax.bar(labels, values, color="#60a5fa", width=0.5)
 
     # --- Y label ---
+    ax.set_xlabel("Stocks", fontsize=10)
     ax.set_ylabel("Orders", fontsize=10)
 
     # --- Grid (soft & clean) ---
