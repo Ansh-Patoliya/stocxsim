@@ -14,11 +14,9 @@ def transactions():
 
         serialized = []
         for row in rows:
-            # Expected: (transaction_id, user_id, amount, symbol_name, transaction_type, created_at)
             try:
                 transaction_id, row_user_id, amount, symbol_name, transaction_type, created_at = row
             except Exception:
-                # Fallback: best-effort tuple/list conversion
                 row = list(row)
                 transaction_id = row[0] if len(row) > 0 else None
                 row_user_id = row[1] if len(row) > 1 else None

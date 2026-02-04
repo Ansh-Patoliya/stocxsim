@@ -37,7 +37,6 @@ def _login_if_needed(force: bool = False) -> bool:
         if now < _blocked_until:
             return False
 
-        # Session TTL is not clearly documented; keep a conservative refresh window.
         if _session_initialized and not force and (now - _session_set_at) < (30 * 60):
             return True
 
@@ -58,19 +57,16 @@ def get_full_market_data(tokens):
     if not tokens:
         return {}
 
-    # Avoid spamming login calls.
     if not _login_if_needed():
         return {}
 
     try:
-        # Most of this app is NSE-only; querying both exchanges increases payload.
         response = _smart.getMarketData(
             mode="FULL",
             exchangeTokens={"NSE": tokens},
         )
         return clean_market_data(response)
     except DataException as ex:
-        # Common rate limit response is non-JSON bytes; SmartApi raises DataException.
         msg = str(ex).lower()
         if "exceeding access rate" in msg or "access denied" in msg:
             with _session_lock:
@@ -79,7 +75,6 @@ def get_full_market_data(tokens):
             return {}
         raise
     except Exception as ex:
-        # If token/session went stale, force relogin once and retry.
         if _login_if_needed(force=True):
             try:
                 response = _smart.getMarketData(
